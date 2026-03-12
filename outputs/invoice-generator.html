@@ -447,11 +447,11 @@
                 <h3>Bill To</h3>
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" id="billToName" value="Yina Chan" oninput="debouncedUpdate()">
+                    <input type="text" id="billToName" value="" placeholder="Your Name" oninput="debouncedUpdate()">
                 </div>
                 <div class="form-group">
                     <label>Company</label>
-                    <input type="text" id="billToCompany" value="Trickle ltd" oninput="debouncedUpdate()">
+                    <input type="text" id="billToCompany" value="" placeholder="Company Name" oninput="debouncedUpdate()">
                 </div>
             </div>
 
@@ -465,7 +465,7 @@
                 <h3>From (Sender)</h3>
                 <div class="form-group">
                     <label>Your Name</label>
-                    <input type="text" id="fromName" value="Yina Chan" oninput="debouncedUpdate()">
+                    <input type="text" id="fromName" value="" placeholder="Your Name" oninput="debouncedUpdate()">
                 </div>
                 <div class="form-group">
                     <label>Your Company (Optional)</label>
@@ -477,15 +477,15 @@
                 <h3>Bank Information</h3>
                 <div class="form-group">
                     <label>Bank Name</label>
-                    <input type="text" id="bankName" value="Hang Seng Bank" oninput="debouncedUpdate()">
+                    <input type="text" id="bankName" value="" placeholder="Bank Name" oninput="debouncedUpdate()">
                 </div>
                 <div class="form-group">
                     <label>Account Name</label>
-                    <input type="text" id="accountName" value="Yina Chan" oninput="debouncedUpdate()">
+                    <input type="text" id="accountName" value="" placeholder="Your Name" oninput="debouncedUpdate()">
                 </div>
                 <div class="form-group">
                     <label>Account Number</label>
-                    <input type="text" id="accountNumber" value="396 054 899-838" oninput="debouncedUpdate()">
+                    <input type="text" id="accountNumber" value="" placeholder="Account Number" oninput="debouncedUpdate()">
                 </div>
             </div>
 
@@ -506,7 +506,7 @@
             <div class="invoice-preview" id="invoicePreview">
                 <div class="invoice-header">
                     <div class="invoice-header-left">
-                        <div class="from-name" id="previewFromName">Yina Chan</div>
+                        <div class="from-name" id="previewFromName">Your Name</div>
                         <div class="from-company" id="previewFromCompany"></div>
                     </div>
                     <h2>INVOICE</h2>
@@ -515,8 +515,8 @@
                 <div class="invoice-info">
                     <div class="bill-to">
                         <h4>BILL TO</h4>
-                        <p><strong id="previewName">Yina Chan</strong></p>
-                        <p id="previewCompany">Trickle ltd</p>
+                        <p><strong id="previewName">Your Name</strong></p>
+                        <p id="previewCompany">Company Name</p>
                     </div>
 
                     <div class="invoice-details">
@@ -558,16 +558,16 @@
 
                 <div class="notes-section">
                     <h4>NOTES</h4>
-                    <p><strong>Bank Name:</strong> <span id="previewBankName">Hang Seng Bank</span></p>
-                    <p><strong>Account Name:</strong> <span id="previewAccountName">Yina Chan</span></p>
-                    <p><strong>Account Number:</strong> <span id="previewAccountNumber">396 054 899-838</span></p>
+                    <p><strong>Bank Name:</strong> <span id="previewBankName">Bank Name</span></p>
+                    <p><strong>Account Name:</strong> <span id="previewAccountName">Your Name</span></p>
+                    <p><strong>Account Number:</strong> <span id="previewAccountNumber">Account Number</span></p>
                     <div id="additionalNotes"></div>
                 </div>
 
                 <div class="signature-section">
                     <h4>SIGNATURE</h4>
                     <div class="signature-line">
-                        <span id="previewSignatureName">Yina Chan</span>
+                        <span id="previewSignatureName">Your Name</span>
                     </div>
                 </div>
             </div>
@@ -682,7 +682,7 @@
 
         function updatePreview() {
             // Update from info (top left)
-            const fromName = document.getElementById('fromName').value || 'Yina Chan';
+            const fromName = document.getElementById('fromName').value || 'Your Name';
             document.getElementById('previewFromName').textContent = fromName;
             document.getElementById('previewFromCompany').textContent =
                 document.getElementById('fromCompany').value || '';
@@ -694,9 +694,9 @@
             document.getElementById('previewDate').textContent =
                 document.getElementById('invoiceDate').value || '2026-03-12';
             document.getElementById('previewName').textContent =
-                document.getElementById('billToName').value || 'Yina Chan';
+                document.getElementById('billToName').value || 'Your Name';
             document.getElementById('previewCompany').textContent =
-                document.getElementById('billToCompany').value || 'Trickle ltd';
+                document.getElementById('billToCompany').value || 'Company Name';
 
             // Get currency symbol
             const symbol = getCurrencySymbol();
@@ -733,11 +733,11 @@
 
             // Update bank information
             document.getElementById('previewBankName').textContent =
-                document.getElementById('bankName').value || 'Hang Seng Bank';
+                document.getElementById('bankName').value || 'Bank Name';
             document.getElementById('previewAccountName').textContent =
-                document.getElementById('accountName').value || 'Yina Chan';
+                document.getElementById('accountName').value || 'Your Name';
             document.getElementById('previewAccountNumber').textContent =
-                document.getElementById('accountNumber').value || '396 054 899-838';
+                document.getElementById('accountNumber').value || 'Account Number';
 
             // Update additional notes
             const notes = document.getElementById('notes').value;
