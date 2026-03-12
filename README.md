@@ -2,6 +2,8 @@
 
 A professional, easy-to-use invoice generator with real-time preview and customizable templates.
 
+**[🚀 Live Demo](https://luxe-ai.github.io/invoice-generator/)**
+
 ## Features
 
 - **Real-time Preview**: See your invoice update as you type
