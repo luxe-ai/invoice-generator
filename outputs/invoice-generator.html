@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator - HappyCapy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ff6b35;
+        }
+
+        .header-actions button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #ff6b35;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e55a2b;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f8f8;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 73px);
+        }
+
+        .form-panel {
+            width: 450px;
+            background: white;
+            padding: 30px;
+            overflow-y: auto;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .preview-panel {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: #f5f5f5;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+
+        .items-section {
+            margin-top: 20px;
+        }
+
+        .item-row {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .item-row input {
+            margin-bottom: 8px;
+        }
+
+        .item-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .item-row-header span {
+            font-weight: 600;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .item-remove {
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .item-remove:hover {
+            background: #cc0000;
+        }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .add-item-btn {
+            width: 100%;
+            padding: 10px;
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-item-btn:hover {
+            background: #e8e8e8;
+            border-color: #ff6b35;
+            color: #ff6b35;
+        }
+
+        .invoice-preview {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .invoice-header-left {
+            flex: 1;
+        }
+
+        .invoice-header-left .from-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .invoice-header-left .from-company {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .invoice-header h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .invoice-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .bill-to h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .bill-to p {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .invoice-details {
+            text-align: right;
+        }
+
+        .invoice-details p {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .invoice-details .label {
+            color: #999;
+            font-weight: 600;
+        }
+
+        .balance-due {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+        }
+
+        .balance-due .label {
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .balance-due .amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .items-table {
+            width: 100%;
+            margin-bottom: 30px;
+            border-collapse: collapse;
+        }
+
+        .items-table thead {
+            background: #f8f8f8;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #999;
+            border-bottom: 2px solid #eee;
+        }
+
+        .items-table th.right {
+            text-align: right;
+        }
+
+        .items-table td {
+            padding: 15px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .items-table td.right {
+            text-align: right;
+        }
+
+        .summary {
+            margin-top: 30px;
+            text-align: right;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: flex-end;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid #333;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .summary-label {
+            margin-right: 40px;
+            color: #666;
+        }
+
+        .summary-value {
+            min-width: 120px;
+            text-align: right;
+        }
+
+        .notes-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+
+        .notes-section h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .notes-section p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .signature-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+            text-align: right;
+        }
+
+        .signature-section h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .signature-line {
+            width: 250px;
+            margin-left: auto;
+            border-top: 2px solid #333;
+            padding-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        @media print {
+            .header, .form-panel {
+                display: none;
+            }
+
+            .preview-panel {
+                padding: 0;
+                background: white;
+            }
+
+            .invoice-preview {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧾 Invoice Generator</h1>
+        <div class="header-actions">
+            <button class="btn-secondary" onclick="saveTemplate()">Save Template</button>
+            <button class="btn-secondary" onclick="loadTemplate()">Load Template</button>
+            <button class="btn-primary" onclick="downloadHTML()">Download HTML</button>
+            <button class="btn-primary" onclick="printInvoice()">Print / PDF</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-panel">
+            <div class="form-section">
+                <h3>Invoice Details</h3>
+                <div class="form-group">
+                    <label>Invoice Number</label>
+                    <input type="text" id="invoiceNumber" value="001" oninput="debouncedUpdate()">
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="invoiceDate" oninput="debouncedUpdate()">
+                </div>
+                <div class="form-group">
+                    <label>Currency</label>
+                    <select id="currency" onchange="updatePreview()">
+                        <option value="USD">USD ($)</option>
+                        <option value="CNY">CNY (¥)</option>
+                        <option value="HKD">HKD (HK$)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Bill To</h3>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="billToName" value="Yina Chan" oninput="debouncedUpdate()">
+                </div>
+                <div class="form-group">
+                    <label>Company</label>
+                    <input type="text" id="billToCompany" value="Trickle ltd" oninput="debouncedUpdate()">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Items</h3>
+                <div id="itemsContainer"></div>
+                <button class="add-item-btn" onclick="addItem()">+ Add Item</button>
+            </div>
+
+            <div class="form-section">
+                <h3>From (Sender)</h3>
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="fromName" value="Yina Chan" oninput="debouncedUpdate()">
+                </div>
+                <div class="form-group">
+                    <label>Your Company (Optional)</label>
+                    <input type="text" id="fromCompany" value="" oninput="debouncedUpdate()">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Bank Information</h3>
+                <div class="form-group">
+                    <label>Bank Name</label>
+                    <input type="text" id="bankName" value="Hang Seng Bank" oninput="debouncedUpdate()">
+                </div>
+                <div class="form-group">
+                    <label>Account Name</label>
+                    <input type="text" id="accountName" value="Yina Chan" oninput="debouncedUpdate()">
+                </div>
+                <div class="form-group">
+                    <label>Account Number</label>
+                    <input type="text" id="accountNumber" value="396 054 899-838" oninput="debouncedUpdate()">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Tax & Notes</h3>
+                <div class="form-group">
+                    <label>Tax Rate (%)</label>
+                    <input type="number" id="taxRate" value="0" min="0" max="100" step="0.1" oninput="debouncedUpdate()">
+                </div>
+                <div class="form-group">
+                    <label>Additional Notes (Optional)</label>
+                    <textarea id="notes" rows="3" oninput="debouncedUpdate()" placeholder="Any additional information..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-panel">
+            <div class="invoice-preview" id="invoicePreview">
+                <div class="invoice-header">
+                    <div class="invoice-header-left">
+                        <div class="from-name" id="previewFromName">Yina Chan</div>
+                        <div class="from-company" id="previewFromCompany"></div>
+                    </div>
+                    <h2>INVOICE</h2>
+                </div>
+
+                <div class="invoice-info">
+                    <div class="bill-to">
+                        <h4>BILL TO</h4>
+                        <p><strong id="previewName">Yina Chan</strong></p>
+                        <p id="previewCompany">Trickle ltd</p>
+                    </div>
+
+                    <div class="invoice-details">
+                        <p><span class="label">Invoice #</span> <span id="previewInvoiceNumber">001</span></p>
+                        <p><span class="label">Date:</span> <span id="previewDate">2026-03-12</span></p>
+
+                        <div class="balance-due">
+                            <p class="label">Balance Due</p>
+                            <p class="amount" id="previewTotal">$0.00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 70%;">Item</th>
+                            <th class="right" style="width: 30%;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewItems">
+                    </tbody>
+                </table>
+
+                <div class="summary">
+                    <div class="summary-row">
+                        <span class="summary-label">Subtotal</span>
+                        <span class="summary-value" id="previewSubtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Tax (<span id="previewTaxRate">0</span>%)</span>
+                        <span class="summary-value" id="previewTax">$0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value" id="previewTotalBottom">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="notes-section">
+                    <h4>NOTES</h4>
+                    <p><strong>Bank Name:</strong> <span id="previewBankName">Hang Seng Bank</span></p>
+                    <p><strong>Account Name:</strong> <span id="previewAccountName">Yina Chan</span></p>
+                    <p><strong>Account Number:</strong> <span id="previewAccountNumber">396 054 899-838</span></p>
+                    <div id="additionalNotes"></div>
+                </div>
+
+                <div class="signature-section">
+                    <h4>SIGNATURE</h4>
+                    <div class="signature-line">
+                        <span id="previewSignatureName">Yina Chan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let items = [];
+        let itemCounter = 0;
+        let updateTimeout = null;
+
+        // Currency symbols
+        const currencySymbols = {
+            'USD': '$',
+            'CNY': '¥',
+            'HKD': 'HK$',
+            'EUR': '€',
+            'GBP': '£'
+        };
+
+        // Debounced update for better performance
+        function debouncedUpdate() {
+            if (updateTimeout) {
+                clearTimeout(updateTimeout);
+            }
+            updateTimeout = setTimeout(() => {
+                updatePreview();
+            }, 150);
+        }
+
+        // Initialize with one default item
+        function init() {
+            // Set today's date
+            document.getElementById('invoiceDate').valueAsDate = new Date();
+
+            // Add default item
+            addItem();
+            items[0] = {
+                description: 'Social media content promotion service',
+                amount: 1275
+            };
+            renderItems();
+            updatePreview();
+        }
+
+        function addItem() {
+            const item = {
+                id: itemCounter++,
+                description: '',
+                amount: 0
+            };
+            items.push(item);
+            renderItems();
+            updatePreview();
+        }
+
+        function removeItem(index) {
+            items.splice(index, 1);
+            renderItems();
+            updatePreview();
+        }
+
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = '';
+
+            items.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item-row';
+                itemDiv.innerHTML = `
+                    <div class="item-row-header">
+                        <span>Item ${index + 1}</span>
+                        ${items.length > 1 ? `<button class="item-remove" onclick="removeItem(${index})">Remove</button>` : ''}
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" value="${item.description}"
+                               oninput="updateItem(${index}, 'description', this.value)">
+                    </div>
+                    <div class="item-grid">
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="number" value="${item.amount}" min="0" step="0.01"
+                                   oninput="updateItem(${index}, 'amount', this.value)">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        function updateItem(index, field, value) {
+            items[index][field] = field === 'description' ? value : parseFloat(value) || 0;
+
+            // For amount changes, only update preview (don't re-render form)
+            if (field === 'amount') {
+                debouncedUpdate();
+            } else {
+                renderItems();
+                updatePreview();
+            }
+        }
+
+        function formatAmount(amount) {
+            return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function getCurrencySymbol() {
+            const currency = document.getElementById('currency').value;
+            return currencySymbols[currency] || currency;
+        }
+
+        function updatePreview() {
+            // Update from info (top left)
+            const fromName = document.getElementById('fromName').value || 'Yina Chan';
+            document.getElementById('previewFromName').textContent = fromName;
+            document.getElementById('previewFromCompany').textContent =
+                document.getElementById('fromCompany').value || '';
+            document.getElementById('previewSignatureName').textContent = fromName;
+
+            // Update basic info
+            document.getElementById('previewInvoiceNumber').textContent =
+                document.getElementById('invoiceNumber').value || '001';
+            document.getElementById('previewDate').textContent =
+                document.getElementById('invoiceDate').value || '2026-03-12';
+            document.getElementById('previewName').textContent =
+                document.getElementById('billToName').value || 'Yina Chan';
+            document.getElementById('previewCompany').textContent =
+                document.getElementById('billToCompany').value || 'Trickle ltd';
+
+            // Get currency symbol
+            const symbol = getCurrencySymbol();
+            const currency = document.getElementById('currency').value;
+
+            // Update items table
+            const tbody = document.getElementById('previewItems');
+            tbody.innerHTML = '';
+
+            let subtotal = 0;
+            items.forEach(item => {
+                const amount = item.amount || 0;
+                subtotal += amount;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.description || 'Untitled Item'}</td>
+                    <td class="right">${currency}${formatAmount(amount)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Calculate tax and total
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            const total = subtotal + taxAmount;
+
+            // Update summary
+            document.getElementById('previewSubtotal').textContent = currency + formatAmount(subtotal);
+            document.getElementById('previewTaxRate').textContent = taxRate.toFixed(1);
+            document.getElementById('previewTax').textContent = currency + formatAmount(taxAmount);
+            document.getElementById('previewTotal').textContent = currency + formatAmount(total);
+            document.getElementById('previewTotalBottom').textContent = currency + formatAmount(total);
+
+            // Update bank information
+            document.getElementById('previewBankName').textContent =
+                document.getElementById('bankName').value || 'Hang Seng Bank';
+            document.getElementById('previewAccountName').textContent =
+                document.getElementById('accountName').value || 'Yina Chan';
+            document.getElementById('previewAccountNumber').textContent =
+                document.getElementById('accountNumber').value || '396 054 899-838';
+
+            // Update additional notes
+            const notes = document.getElementById('notes').value;
+            const notesDiv = document.getElementById('additionalNotes');
+            if (notes) {
+                notesDiv.innerHTML = `<p style="margin-top: 15px;">${notes}</p>`;
+            } else {
+                notesDiv.innerHTML = '';
+            }
+        }
+
+        function saveTemplate() {
+            const template = {
+                invoiceNumber: document.getElementById('invoiceNumber').value,
+                fromName: document.getElementById('fromName').value,
+                fromCompany: document.getElementById('fromCompany').value,
+                billToName: document.getElementById('billToName').value,
+                billToCompany: document.getElementById('billToCompany').value,
+                currency: document.getElementById('currency').value,
+                taxRate: document.getElementById('taxRate').value,
+                bankName: document.getElementById('bankName').value,
+                accountName: document.getElementById('accountName').value,
+                accountNumber: document.getElementById('accountNumber').value,
+                items: items
+            };
+            localStorage.setItem('invoiceTemplate', JSON.stringify(template));
+            alert('Template saved successfully!');
+        }
+
+        function loadTemplate() {
+            const saved = localStorage.getItem('invoiceTemplate');
+            if (!saved) {
+                alert('No saved template found.');
+                return;
+            }
+
+            const template = JSON.parse(saved);
+            document.getElementById('invoiceNumber').value = template.invoiceNumber;
+            if (template.fromName) document.getElementById('fromName').value = template.fromName;
+            if (template.fromCompany) document.getElementById('fromCompany').value = template.fromCompany;
+            document.getElementById('billToName').value = template.billToName;
+            document.getElementById('billToCompany').value = template.billToCompany;
+            document.getElementById('currency').value = template.currency;
+            document.getElementById('taxRate').value = template.taxRate;
+
+            // Load bank info if exists
+            if (template.bankName) document.getElementById('bankName').value = template.bankName;
+            if (template.accountName) document.getElementById('accountName').value = template.accountName;
+            if (template.accountNumber) document.getElementById('accountNumber').value = template.accountNumber;
+
+            items = template.items;
+            itemCounter = items.length;
+
+            renderItems();
+            updatePreview();
+            alert('Template loaded successfully!');
+        }
+
+        function downloadHTML() {
+            const invoiceHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice #${document.getElementById('invoiceNumber').value}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; }
+        ${document.querySelector('style').textContent.match(/\.invoice-preview[\s\S]*?(?=@media)/)[0]}
+    </style>
+</head>
+<body>
+    ${document.getElementById('invoicePreview').innerHTML}
+</body>
+</html>`;
+
+            const blob = new Blob([invoiceHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invoice_${document.getElementById('invoiceNumber').value}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function printInvoice() {
+            window.print();
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
